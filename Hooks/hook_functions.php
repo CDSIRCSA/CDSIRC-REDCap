@@ -103,12 +103,26 @@ function redcap_data_entry_form($project_id, $record, $instrument, $event_id, $g
     else if ($instrument == 'icd10'){
         ?>
     	<script type="text/javascript">
-            $(document).ready(function() {
-                const chapter_dict = {"1": {"Name": "Certain infectious and parasitic diseases", "Codes": "A00-B99"}, "2": {"Name": "Neoplasms", "Codes": "C00-D49"}, "3": {"Name": "Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism", "Codes": "D50-D89"}, "4": {"Name": "Endocrine, nutritional and metabolic diseases", "Codes": "E00-E89"}, "5": {"Name": "Mental, Behavioral and Neurodevelopmental disorders", "Codes": "F01-F99"}, "6": {"Name": "Diseases of the nervous system", "Codes": "G00-G99"}, "7": {"Name": "Diseases of the eye and adnexa", "Codes": "H00-H59"}, "8": {"Name": "Diseases of the ear and mastoid process", "Codes": "H60-H95"}, "9": {"Name": "Diseases of the circulatory system", "Codes": "I00-I99"}, "10": {"Name": "Diseases of the respiratory system", "Codes": "J00-J99"}, "11": {"Name": "Diseases of the digestive system", "Codes": "K00-K95"}, "12": {"Name": "Diseases of the skin and subcutaneous tissue", "Codes": "L00-L99"}, "13": {"Name": "Diseases of the musculoskeletal system and connective tissue", "Codes": "M00-M99"}, "14": {"Name": "Diseases of the genitourinary system", "Codes": "N00-N99"}, "15": {"Name": "Pregnancy, childbirth and the puerperium", "Codes": "O00-O9A"}, "16": {"Name": "Certain conditions originating in the perinatal period", "Codes": "P00-P96"}, "17": {"Name": "Congenital malformations, deformations and chromosomal abnormalities", "Codes": "Q00-Q99"}, "18": {"Name": "Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified", "Codes": "R00-R99"}, "19": {"Name": "Injury, poisoning and certain other consequences of external causes", "Codes": "S00-T88"}, "20": {"Name": "External causes of morbidity", "Codes": "V00-Y99"}, "21": {"Name": "Factors influencing health status and contact with health services", "Codes": "Z00-Z99"}};               
-                var chapter = String($('input[name="icd_10_chapter"]').val());
-                $('input[name="icd_10_chapter_description"]').val(chapter_dict[chapter]["Name"]);
-                
-            });
+    	    // ICD-10 chapter dictionary
+    	    var chapter_dict = {"1": {"Name": "Certain infectious and parasitic diseases", "Codes": "A00-B99"}, "2": {"Name": "Neoplasms", "Codes": "C00-D49"}, "3": {"Name": "Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism", "Codes": "D50-D89"}, "4": {"Name": "Endocrine, nutritional and metabolic diseases", "Codes": "E00-E89"}, "5": {"Name": "Mental, Behavioral and Neurodevelopmental disorders", "Codes": "F01-F99"}, "6": {"Name": "Diseases of the nervous system", "Codes": "G00-G99"}, "7": {"Name": "Diseases of the eye and adnexa", "Codes": "H00-H59"}, "8": {"Name": "Diseases of the ear and mastoid process", "Codes": "H60-H95"}, "9": {"Name": "Diseases of the circulatory system", "Codes": "I00-I99"}, "10": {"Name": "Diseases of the respiratory system", "Codes": "J00-J99"}, "11": {"Name": "Diseases of the digestive system", "Codes": "K00-K95"}, "12": {"Name": "Diseases of the skin and subcutaneous tissue", "Codes": "L00-L99"}, "13": {"Name": "Diseases of the musculoskeletal system and connective tissue", "Codes": "M00-M99"}, "14": {"Name": "Diseases of the genitourinary system", "Codes": "N00-N99"}, "15": {"Name": "Pregnancy, childbirth and the puerperium", "Codes": "O00-O9A"}, "16": {"Name": "Certain conditions originating in the perinatal period", "Codes": "P00-P96"}, "17": {"Name": "Congenital malformations, deformations and chromosomal abnormalities", "Codes": "Q00-Q99"}, "18": {"Name": "Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified", "Codes": "R00-R99"}, "19": {"Name": "Injury, poisoning and certain other consequences of external causes", "Codes": "S00-T88"}, "20": {"Name": "External causes of morbidity", "Codes": "V00-Y99"}, "21": {"Name": "Factors influencing health status and contact with health services", "Codes": "Z00-Z99"}};               
+            // Get ICD-10 chapter and set the chapter description
+            var chapter = document.getElementsByName("icd_10_chapter")[0].value;
+            document.getElementsByName("icd_10_chapter_description")[0].value = chapter_dict[chapter]["Name"];
+        </script>
+    <?php
+    }
+    
+    else if ($instrument == 'screening_information'){
+        ?>
+    	<script type="text/javascript">
+    	    // Activity and place code dictionaries
+            var activity_dict = {"0": "While engaged in sports activity", "1": "While engaged in leisure activity", "2": "While working for income", "3": "While engaged in other types of work", "4": "While resting, sleeping, eating or engaging in other vital activities", "8": "While engaged in other specified activities", "9": "During unspecified activity"}
+            var place_dict = {"0": "Home", "1": "Residential institution", "2": "School, other institution and public administrative area", "3": "Sports and athletics area", "4": "Street and highway", "5": "Trade and service area", "6": "Industrial and construction area", "7": "Farm", "8": "Other specified places", "9": "Unspecified place"}
+            // Get codes and set descriptions
+            var activity_code = document.getElementsByName("activity_code")[0].value;
+            document.getElementsByName("activity_description")[0].value = activity_dict[activity_code];
+            var place_code = document.getElementsByName("place_code")[0].value;
+            document.getElementsByName("place_description")[0].value = place_dict[place_code];
         </script>
     <?php
     }
