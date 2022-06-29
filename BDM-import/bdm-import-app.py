@@ -109,7 +109,7 @@ if bdm_list is not None:
                     df.at[i, 'seifa_education_occupation'] = str(nested_dict[census_year][postcode]['SEIFA_education_occupation'])
                     df.at[i, 'seifa_economic_resources'] = str(nested_dict[census_year][postcode]['SEIFA_economic'])
                     df.at[i, 'region'] = regions_dict[postcode]
-                    df.at[i, 'remoteness'] = aria_dict[census_year][postcode]
+                    df.at[i, 'remoteness_area'] = aria_dict[census_year][postcode]
             return df
         
         df = seifa_region_aria(df)
