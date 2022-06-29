@@ -6,12 +6,12 @@ countries = "USA, United States of America|AFG, Afghanistan|ALA, Åland Islands|
 print(countries.replace('|', '\n'))
 
 abs_data = pd.read_excel('ABS countries.xls',
-                         sheet_name = 'Table 1.3',
+                         sheet_name = 'countries_modified',
                          usecols = "C,D",
-                         skiprows = 6
-                         )
+                         skiprows = 6)
+
 abs_data = abs_data.dropna()
-abs_data = abs_data[abs_data.Countries.apply(lambda x: isinstance(x, int))] 
+abs_data = abs_data[abs_data.Countries.apply(lambda x: isinstance(x, int))]
 
 for index, row in abs_data.iterrows():
     print(str(row.values[0]) + ", " + row.values[1])
@@ -47,6 +47,6 @@ for index, row in abs_groups.iterrows():
 for index, row in abs_groups.iterrows():
     groups_dict[row.values[0]][row.values[1]][row.values[2]] = row.values[3]
 
-test = [2, 'two']
-type(test)
-type(test[0]) == int
+countries_dict = {}
+for index, row in abs_data.iterrows():
+    countries_dict[row.values[1]] = row['Countries']

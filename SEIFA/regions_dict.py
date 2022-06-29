@@ -14,4 +14,4 @@ regions_dict = {}
 for index, row in regions.iterrows():
     regions_dict[row['Postcode']] = row['SA Government Region']
 
-print(regions_dict)
+print(json.dumps(regions_dict))
