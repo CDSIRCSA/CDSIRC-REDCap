@@ -84,11 +84,11 @@ if bdm_list is not None:
         df['Postcode'] = df.apply(lambda row: '0' + row['Postcode'] if len(row['Postcode']) == 3 else row['Postcode'], axis=1)
         
         # Process SEIFA, regions and remoteness (ARIA)
-        with open('BDM-import/nested_dict.txt') as dict_file:
+        with open('BDM-import/nested_dict.txt') as dict_file: #note these filepaths are configured for use on Streamlit cloud, i.e. when running from the CDSIRC-REDCap GitHub repo, and won't work locally without removing the BDM-import part
             nested_dict = json.load(dict_file)
-        with open('regions.txt') as dict_file:
+        with open('BDM-import/regions.txt') as dict_file:
             regions_dict = json.load(dict_file)
-        with open('aria_dict.txt') as dict_file:
+        with open('BDM-import/aria_dict.txt') as dict_file:
             aria_dict = json.load(dict_file)
             
         def seifa_region_aria(data):
