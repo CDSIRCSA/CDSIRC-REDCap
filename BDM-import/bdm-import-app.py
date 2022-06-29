@@ -84,7 +84,7 @@ if bdm_list is not None:
         df['Postcode'] = df.apply(lambda row: '0' + row['Postcode'] if len(row['Postcode']) == 3 else row['Postcode'], axis=1)
         
         # Process SEIFA, regions and remoteness (ARIA)
-        with open('CDSIRC-REDCap/BDM-import/nested_dict.txt') as dict_file:
+        with open('BDM-import/nested_dict.txt') as dict_file:
             nested_dict = json.load(dict_file)
         with open('regions.txt') as dict_file:
             regions_dict = json.load(dict_file)
