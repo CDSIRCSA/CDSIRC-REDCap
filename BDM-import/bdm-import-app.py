@@ -4,6 +4,7 @@ import streamlit as st
 import numpy as np
 from datetime import datetime
 import json
+import re
 
 st.title('BDM list to REDCap converter')
 #st.subheader('Upload a BDM list')
@@ -12,6 +13,7 @@ bdm_list = st.file_uploader(label='Upload a BDM list (.csv)',
 
 if bdm_list is not None:
 
+    #df = pd.read_csv("bdm_list.csv", index_col=False, engine='python', skipfooter=1, dtype=str) # dev only
     df = pd.read_csv(bdm_list, index_col=False, engine='python', skipfooter=1, dtype=str)
     df.index.rename('case_number', inplace=True)
     
@@ -33,6 +35,9 @@ if bdm_list is not None:
         # Run the rest of the code
         
         df['exclude_case'] = '0' 
+        
+        # Convert names to title case
+        df[['Surname','Given Names','Surname of Father','Surname of Father at Birth','Given Names of Father','Surname of Mother','Surname of Mother at Birth','Given Names of Mother','Doctors Name']] = df[['Surname','Given Names','Surname of Father','Surname of Father at Birth','Given Names of Father','Surname of Mother','Surname of Mother at Birth','Given Names of Mother','Doctors Name']].apply(lambda x: x.str.title(), axis=1)
         
         # Age group
         def age_group(row):
@@ -79,8 +84,8 @@ if bdm_list is not None:
         df.drop(df.columns.to_series()['Cause of Death 1A':'Cause of Death 2F Units'], axis=1, inplace=True) # drop the fields
         
         # Process address and country of birth fields
-        df['address'] = df.apply(lambda row: row['Residential Address 1'].split(',')[0], axis=1)
-        df['suburb'] = df.apply(lambda row: row['Residential Address 2'].split(row['State'])[0], axis=1)
+        df['address'] = df.apply(lambda row: row['Residential Address 1'].split(',')[0].title(), axis=1)
+        df['suburb'] = df.apply(lambda row: row['Residential Address 2'].split(row['State'])[0].title(), axis=1)
         df['Postcode'] = df.apply(lambda row: '0' + row['Postcode'] if len(row['Postcode']) == 3 else row['Postcode'], axis=1)
         
         # Process SEIFA, regions and remoteness (ARIA)
@@ -203,6 +208,22 @@ if bdm_list is not None:
         
         df = df.astype(str)
         
+        # Convert places to title case
+        exceptions = ['SA','NSW','WA','ACT','NT','VIC','QLD','TAS','FMC','WCH','AVE','ST','TCE','RD','OF','AND']
+
+        def title_except(s, exceptions):
+            word_list = re.split(' ', s)       # re.split behaves as expected
+            final = [word_list[0].capitalize() if word_list[0] not in exceptions else word_list[0]]
+            for word in word_list[1:]:
+                final.append(word.lower() if word in exceptions else word.capitalize())
+            return " ".join(final)
+        
+        
+        for col in ['place_of_birth','father_place_of_birth','mother_place_of_birth','place_of_death','doctor_location']:
+            for i, row in df.iterrows():
+                df.at[i, col] = title_except(row[col], exceptions)
+    
+
         # Process country groups
         country_groups = {
                     '1': {'name': 'Oceania and Antarctica',
