@@ -270,11 +270,12 @@ if bdm_list:
         df['father_minor_group'] = df.apply(lambda row: minor_group(row, 'father_country_of_birth'), axis=1)   
         
         
-        # Assign CALD status
+        # Assign family CALD status       
+        fields = ['country_of_birth','mother_country_of_birth','father_country_of_birth']
+
         def family_cald_status(data):
             df = data.copy(deep=True)
             df['parents_cald_background'] = ''
-            fields = ['country_of_birth','mother_country_of_birth','father_country_of_birth']
             
             for i, row in df.iterrows():
                 if all(row[field] > '1101' for field in fields):
@@ -300,6 +301,18 @@ if bdm_list:
         
         df = family_cald_status(df)
         
+        # CALD status
+        def cald_status(row):
+            cald_background = ''
+            if all(row[field] == '1101' for field in fields):
+                cald_background = '2' # Not CALD (No)
+            elif any(row[field] > '1101' for field in fields):
+                cald_background = '1' # CALD (Yes)
+            else:
+                cald_background = '0' # Unknown (update during screening)
+            return cald_background
+        
+        df['cald'] = df.apply(lambda x: cald_status(x), axis=1)
         
         st.download_button('Download CSV', df.to_csv().encode('utf-8'), bdm_list.name[:-4]+'_processed.csv', 'text/csv')
         
