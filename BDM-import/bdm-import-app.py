@@ -11,7 +11,7 @@ st.title('BDM list to REDCap converter')
 bdm_list = st.file_uploader(label='Upload a BDM list (.csv)',
                             type=['csv'])
 
-if bdm_list is not None:
+if bdm_list:
 
     #df = pd.read_csv("bdm_list.csv", index_col=False, engine='python', skipfooter=1, dtype=str) # dev only
     df = pd.read_csv(bdm_list, index_col=False, engine='python', skipfooter=1, dtype=str)
@@ -270,10 +270,38 @@ if bdm_list is not None:
         df['father_minor_group'] = df.apply(lambda row: minor_group(row, 'father_country_of_birth'), axis=1)   
         
         
+        # Assign CALD status
+        def family_cald_status(data):
+            df = data.copy(deep=True)
+            df['parents_cald_background'] = ''
+            fields = ['country_of_birth','mother_country_of_birth','father_country_of_birth']
+            
+            for i, row in df.iterrows():
+                if all(row[field] > '1101' for field in fields):
+                    df.at[i, 'parents_cald_background'] = '1' # Child and both parents born overseas 
+                elif row['country_of_birth'] > '1101' and row['mother_country_of_birth'] == '' and row['father_country_of_birth'] == '':
+                    df.at[i, 'parents_cald_background'] = '2' # Child born overseas and no information on parents
+                elif row['country_of_birth'] == '1101' and row['mother_country_of_birth'] > '1101' and row['father_country_of_birth'] > '1101':
+                    df.at[i, 'parents_cald_background'] = '3' # Both parents born overseas and child born in Aus
+                elif row['country_of_birth'] == '1101' and any(row[parent] > '1101' for parent in ['mother_country_of_birth','father_country_of_birth']) and any(row[parent] == '1101' for parent in ['mother_country_of_birth','father_country_of_birth']):
+                    df.at[i, 'parents_cald_background'] = '4' # One parent born overseas and child born in Aus
+                elif row['country_of_birth'] > '1101' and all(row[parent] == '1101' for parent in ['mother_country_of_birth','father_country_of_birth']):
+                    df.at[i, 'parents_cald_background'] = '5' # Child born overseas and parents born in Aus
+                elif row['country_of_birth'] == '1101' and any(row[parent] == '' for parent in ['mother_country_of_birth','father_country_of_birth']) and all(row[parent] <= '1101' for parent in ['mother_country_of_birth','father_country_of_birth']):
+                    df.at[i, 'parents_cald_background'] = '6' # Child born in Aus and no information on 1 or 2 parents (no parents born overseas)
+                elif all(row[field] == '1101' for field in fields):
+                    df.at[i, 'parents_cald_background'] = '7' # Child and parents born in Aus
+                elif all(row[field] == '' for field in fields):
+                    df.at[i, 'parents_cald_background'] = '9' #Unknown
+                else:
+                    df.at[i, 'parents_cald_background'] = '8' # Other not fitting into categories 1-7
+            
+            return df
+        
+        df = family_cald_status(df)
         
         
-        
-        st.download_button('Download CSV', df.to_csv().encode('utf-8'), 'processed_bdm_list.csv', 'text/csv')
+        st.download_button('Download CSV', df.to_csv().encode('utf-8'), bdm_list.name[:-4]+'_processed.csv', 'text/csv')
         
         st.subheader("Preview data")
         st.write(df)
