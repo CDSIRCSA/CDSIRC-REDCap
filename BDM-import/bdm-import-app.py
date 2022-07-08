@@ -14,7 +14,8 @@ bdm_list = st.file_uploader(label='Upload a BDM list (.csv)',
 if bdm_list:
 
     #df = pd.read_csv("bdm_list.csv", index_col=False, engine='python', skipfooter=1, dtype=str) # dev only
-    df = pd.read_csv(bdm_list, index_col=False, engine='python', skipfooter=1, dtype=str)
+    df = pd.read_csv(bdm_list, index_col=False, engine='python', dtype=str)
+    df = df[~df['Reg No'].str.startswith('T')] # Delete counter row
     df.index.rename('case_number', inplace=True)
     
     # Recode values and remove nans
@@ -87,7 +88,8 @@ if bdm_list:
         df['address'] = df.apply(lambda row: row['Residential Address 1'].split(',')[0].title(), axis=1)
         df['suburb'] = df.apply(lambda row: row['Residential Address 2'].split(row['State'])[0].title(), axis=1)
         df['Postcode'] = df.apply(lambda row: '0' + row['Postcode'] if len(row['Postcode']) == 3 else row['Postcode'], axis=1)
-        
+        df['residential_status'] = df['State'].apply(lambda x: 'SA' if x == 'SA' else 'Outside SA' if x in ['QLD','NSW','ACT','VIC','TAS','NT','WA'] else 'Outside Australia')
+
         # Process SEIFA, regions and remoteness (ARIA)
         with open('BDM-import/nested_dict.txt') as dict_file: #note these filepaths are configured for use on Streamlit cloud, i.e. when running from the CDSIRC-REDCap GitHub repo, and won't work locally without removing the BDM-import part
             nested_dict = json.load(dict_file)
