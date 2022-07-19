@@ -6,3 +6,5 @@ streamlit==1.10.0
 numpy==1.23.1
 
 msoffcrypto-tool==5.0.0
+
+openpyxl==3.0.10
