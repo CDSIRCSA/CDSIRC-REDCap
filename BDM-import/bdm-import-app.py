@@ -316,6 +316,15 @@ if bdm_list:
         
         df['cald'] = df.apply(lambda x: cald_status(x), axis=1)
         
+        # Assign default values since these aren't processed by REDCap when importing data
+        df['screening_status'] = '1'
+        df['review_status'] = '1' #both pending
+        df['information_available___0'] = '0' #None
+        df['category_of_death'] = '0' #pending
+        df['cp_history'] = '0' #not checked
+        df['disability_register'] = '0' #pending
+        
+        # The interface
         st.download_button('Download CSV', df.to_csv().encode('utf-8'), bdm_list.name[:-4]+'_processed.csv', 'text/csv')
         
         st.subheader("Preview data")
