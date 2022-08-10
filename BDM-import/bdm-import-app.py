@@ -319,7 +319,7 @@ if bdm_list:
         # Assign default values since these aren't processed by REDCap when importing data
         df['screening_status'] = '1'
         df['review_status'] = '1' #both pending
-        df['information_available___0'] = '0' #None
+        df['information_available___0'] = '1' #None
         df['category_of_death'] = '0' #pending
         df['cp_history'] = '0' #not checked
         df['disability_register'] = '0' #pending
