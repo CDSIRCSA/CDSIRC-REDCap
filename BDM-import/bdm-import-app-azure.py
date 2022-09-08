@@ -84,7 +84,7 @@ if bdm_list:
     df['residential_status'] = df['State'].apply(lambda x: 'SA' if x == 'SA' else 'Outside SA' if x in ['QLD','NSW','ACT','VIC','TAS','NT','WA'] else 'Outside Australia')
 
     # Process SEIFA, regions and remoteness (ARIA)
-    with open('nested_dict.txt') as dict_file: #note these filepaths are configured for use on Streamlit cloud, i.e. when running from the CDSIRC-REDCap GitHub repo, and won't work locally without removing the BDM-import part
+    with open('nested_dict.txt') as dict_file: 
         nested_dict = json.load(dict_file)
     with open('regions.txt') as dict_file:
         regions_dict = json.load(dict_file)
@@ -108,8 +108,11 @@ if bdm_list:
                 df.at[i, 'seifa_adv_disadv'] = str(nested_dict[census_year][postcode]['SEIFA_advantage_disadvantage'])
                 df.at[i, 'seifa_education_occupation'] = str(nested_dict[census_year][postcode]['SEIFA_education_occupation'])
                 df.at[i, 'seifa_economic_resources'] = str(nested_dict[census_year][postcode]['SEIFA_economic'])
-                df.at[i, 'region'] = regions_dict[postcode]
                 df.at[i, 'remoteness_area'] = aria_dict[census_year][postcode]
+                if row['residential_status'] == 'SA':
+                    df.at[i, 'region'] = regions_dict[postcode]
+                else:
+                    df.at[i, 'region'] = ''
         return df
     
     df = seifa_region_aria(df)
@@ -154,7 +157,7 @@ if bdm_list:
     
     
     # Process life duration
-    df['life_duration_minutes'] = df.apply(lambda row: str(int(row['Age'])*60) if (row['Age Units'] == "HOURS" and row['Age'] < 24) or row['Age Units'] == "HOUR" else (str(row['Age']) if row['Age Units'] == "MINUTES" else ""), axis=1)
+    df['life_duration_minutes'] = df.apply(lambda row: str(int(row['Age'])*60) if (row['Age Units'] == "HOURS" and int(row['Age']) < 24) or row['Age Units'] == "HOUR" else (str(row['Age']) if row['Age Units'] == "MINUTES" else ""), axis=1)
     
     # Process Aboriginal status
     df['cultural_background'] = df.apply(lambda row: 2 if (row['Aboriginal Indicator'] == 'Y' or row['Torres Strait Islander Indicator'] == 'Y') else 1, axis=1)

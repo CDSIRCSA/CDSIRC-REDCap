@@ -90,16 +90,18 @@ if file:
     
     
     # --------------------------------------
-    # Add missing periods to codes
+    # Add missing periods to codes and remove leading whitespace
     code_fields = ['underlying_cod','mcod_1a_1','mcod_1a_2','mcod_1a_3','mcod_1b_1','mcod_1b_2','mcod_1b_3','mcod_1c','mcod_1d','mcod_2','main_fetal_condition_1','main_fetal_condition_2','main_fetal_condition_3','other_fetal_conditions_1','other_fetal_conditions_2','other_fetal_conditions_3','main_maternal_condition','other_maternal_conditions_1','other_maternal_conditions_2','other_rel_circumstances']
     invalid_codes = []
     for i, row in df.iterrows():
         for field in code_fields:
             if row[field]:
-                if bool(re.match(r'\D\d', row[field])): # if the code starts with a letter then a number
+                if row[field][0] == ' ': # if leading space, remove space
+                    df.at[i, field] = row[field][1:]
+                elif bool(re.match(r'\D\d', row[field])): # if the code starts with a letter then a number
                     if len(row[field]) > 3 and row[field][3] != '.': # if it's missing a period
                         df.at[i, field] = row[field][0:3] + '.' + row[field][-1] # add the period
-                else:
+                else: # add to invalid codes list
                     invalid_codes.append('- Case {} ({}): \'{}\''.format(row['case_number'], field, row[field]))
     
     # --------------------------------------
@@ -114,9 +116,10 @@ if file:
     # Download the data
     st.download_button('Download processed data', df.to_csv().encode('utf-8'), file.name[:-5]+'_processed.csv', 'text/csv')
     
-    st.subheader("Errors")
-    st.write("Please fix or remove the following invalid codes before loading into REDCap:")
-    st.write('\n'.join(invalid_codes))
+    if len(invalid_codes) > 0:
+        st.subheader("Errors")
+        st.write("Please fix or remove the following invalid codes before loading into REDCap:")
+        st.write('\n'.join(invalid_codes))
     
     st.subheader("Preview data")
     st.write(df)
