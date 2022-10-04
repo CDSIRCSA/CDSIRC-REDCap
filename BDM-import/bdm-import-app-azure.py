@@ -291,7 +291,7 @@ if bdm_list:
             elif all(row[field] == '1101' for field in fields):
                 df.at[i, 'parents_cald_background'] = '7' # Child and parents born in Aus
             elif all(row[field] == '' for field in fields):
-                df.at[i, 'parents_cald_background'] = '9' #Unknown
+                df.at[i, 'parents_cald_background'] = '0' #Unknown
             else:
                 df.at[i, 'parents_cald_background'] = '8' # Other not fitting into categories 1-7
         
