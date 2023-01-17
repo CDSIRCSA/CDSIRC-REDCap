@@ -28,6 +28,30 @@ if bdm_list:
     # Convert names to title case
     df[['Surname','Given Names','Surname of Father','Surname of Father at Birth','Given Names of Father','Surname of Mother','Surname of Mother at Birth','Given Names of Mother','Doctors Name']] = df[['Surname','Given Names','Surname of Father','Surname of Father at Birth','Given Names of Father','Surname of Mother','Surname of Mother at Birth','Given Names of Mother','Doctors Name']].apply(lambda x: x.str.title(), axis=1)
     
+    # Detect adults based on period of residence
+    # note only adults not born in Australia will be detected
+    def adults_por(row):
+        por = row['Period of Residence']
+        if 'YEARS' in por:
+            if int(por.split()[0]) > 17:
+                #raise Exception("{GivenNames} {Surname} appears to be an adult based on their period of residence ({POR}).\nPlease review this case before re-uploading the BDM list.".format(GivenNames=row['Given Names'], Surname=row['Surname'], POR=row['Period of Residence']))
+                st.error('''Error:  
+                         {GivenNames} {Surname} appears to be an adult based on their period of residence ({POR}).  
+                         Please review this case before continuing.'''.format(GivenNames=row['Given Names'], Surname=row['Surname'], POR=row['Period of Residence']))
+
+    df.apply(lambda row: adults_por(row), axis=1)
+    
+    # Detect adults based on cause of death
+    cod_fields = ["Cause of Death 1A", "Cause of Death 1B", "Cause of Death 1C", "Cause of Death 1D", "Cause of Death 1E", "Cause of Death 2A", "Cause of Death 2B", "Cause of Death 2C", "Cause of Death 2D", "Cause of Death 2E"]
+    def adult_cod(row):
+        for field in cod_fields:
+            if any(x in row[field] for x in ['DEMENTIA','ALZHEIMER','CORONARY DISEASE','STROKE']):
+                st.warning('''Warning:  
+                           {GivenNames} {Surname} may be an adult based on the following cause of death: {Cause}  
+                               Please review before continuing.'''.format(GivenNames=row['Given Names'], Surname=row['Surname'], Cause=row[field]))
+   
+    df.apply(adult_cod, axis=1) # apply the function
+    
     # Age group
     def age_group(row):
         if row['Date of Birth'] == '':
@@ -44,7 +68,8 @@ if bdm_list:
         age_days = (dod - dob).days
         age_group = ''
         if age_years >= 18:
-            raise Exception("{GivenNames} {Surname} appears to be an adult aged {Age} years.\nPlease review this case before re-uploading the BDM list.".format(GivenNames=row['Given Names'], Surname=row['Surname'], Age=age_years)) # Raise an exception if an adult case is detected
+            st.error('''{GivenNames} {Surname} appears to be an adult aged {Age} years.  
+                     Please review this case before re-uploading the BDM list.'''.format(GivenNames=row['Given Names'], Surname=row['Surname'], Age=age_years)) # Raise an exception if an adult case is detected
         elif age_years >= 15:
             age_group = '15 to 17 years'
         elif age_years >= 10:
@@ -319,11 +344,10 @@ if bdm_list:
     df['category_of_death'] = '0' #pending
     df['cp_history'] = '0' #not checked
     df['disability_register'] = '0' #pending
+    df['coding_status'] = '0' #To be de-identified
     
     # The interface
     st.download_button('Download CSV', df.to_csv().encode('utf-8'), bdm_list.name[:-4]+'_processed.csv', 'text/csv')
     
     st.subheader("Preview data")
     st.write(df)
-
-
