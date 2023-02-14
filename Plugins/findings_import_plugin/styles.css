@@ -1,0 +1,19 @@
+#title {
+    text-align: center; 
+    color: #800000;
+    font-family: Verdana;
+    width: 500px;
+    margin: auto;
+}
+
+#file_upload {
+    text-align: center;
+    width: 500px;
+    margin: auto;
+    background-color: #F5F5F5;
+}
+
+form {
+    margin: auto;
+    padding: 10px;
+}

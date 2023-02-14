@@ -110,7 +110,7 @@ if file:
     df.set_index('case_number', inplace=True)
     df.replace({None:''}, inplace=True)
     # Assign coding status
-    df['coding_status'] = df['underlying_cod'].apply(lambda x: '4' if x != '' else '')
+    df['coding_status'] = df.apply(lambda x: '4' if x['underlying_cod'] != '' and x['icd_coder_comments'] == '' else '3', axis=1)
     
     # --------------------------------------
     # Download the data

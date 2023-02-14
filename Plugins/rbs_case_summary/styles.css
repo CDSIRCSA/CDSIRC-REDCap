@@ -1,0 +1,75 @@
+#main-display {
+    page-break-before: always;
+}
+
+#main-display:first-child {
+    page-break-before: avoid;
+}
+
+tbody p {
+    white-space: pre-wrap;
+}
+
+td {
+    padding-bottom: 10px;
+}
+
+.pad-bottom {
+    padding-bottom: 30px;
+}
+
+p, label {
+    font-family: Arial, sans-serif;
+    line-height: 1.3em;
+}
+
+#main-display {
+    width: 95%;
+    max-width: 900px;
+    margin: auto;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    display: block;
+}
+
+input[type=text], select {
+  width: 100%;
+  padding: 6px 16px;
+  margin: 6px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #C00000;
+  opacity: 80%;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  opacity: 100%;
+}
+
+#agenda_paper {
+    float: right;
+    font-size: 28;
+    font-family: Calibri, sans-serif;
+}
+
+@page  
+{ 
+    size: auto;   /* auto is the initial value */ 
+    
+    /* this affects the margin in the printer settings */ 
+    margin: 15mm 20mm 20mm 15mm;  
+}
+
+

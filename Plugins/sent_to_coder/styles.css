@@ -1,0 +1,18 @@
+#title {
+    text-align: center; 
+    margin: 30px;
+    color: #800000;
+    font-family: Verdana;
+}
+
+#submitButton {
+    text-align: center;
+    width: 500px;
+    margin: auto;
+    background-color: #F5F5F5;
+}
+
+form {
+    margin: auto;
+    padding: 10px;
+}
