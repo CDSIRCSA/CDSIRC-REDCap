@@ -1,0 +1,13 @@
+------ rebuild the app ------
+docker build -t bdmimportapp:latest .       
+
+------ create a copy for azure ------
+docker tag bdmimportapp:latest redcapcontainers.azurecr.io/bdmimportapp:latest
+
+------ push the rebuilt image to the container registry ------
+docker push redcapcontainers.azurecr.io/bdmimportapp:latest
+
+
+
+------ served at ------
+https://bdmimportapp.azurewebsites.net/
