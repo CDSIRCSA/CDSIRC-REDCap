@@ -1,0 +1,3 @@
+select code, code_description
+from icd_10_codedescription
+limit 13000
