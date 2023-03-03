@@ -1,0 +1,13 @@
+------ rebuild the app ------
+docker build -t icd10importapp:latest .       
+
+------ create a copy for azure ------
+docker tag icd10importapp:latest redcapcontainers.azurecr.io/icd10importapp:latest
+
+------ push the rebuilt image to the container registry ------
+docker push redcapcontainers.azurecr.io/icd10importapp:latest
+
+
+
+
+https://icd10importapp.azurewebsites.net/
