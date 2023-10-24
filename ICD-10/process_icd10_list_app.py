@@ -17,9 +17,9 @@ if file:
     # Decrypt the file
     temp = io.BytesIO()
     
-    excel = msoffcrypto.OfficeFile(file)
-    excel.load_key('jazzy')
-    excel.decrypt(temp)
+   # excel = msoffcrypto.OfficeFile(file)
+   # excel.load_key('jazzy')
+   # excel.decrypt(temp)
     
     # Load it into a df
     df = pd.read_excel(temp, dtype=str)
