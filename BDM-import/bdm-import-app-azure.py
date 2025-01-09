@@ -327,9 +327,9 @@ if bdm_list:
     # CALD status
     def cald_status(row):
         cald_background = ''
-        if all(row[field] == '1101' for field in fields):
+        if all(row[field] == '1101' or '1102' or '1199' or '1201' or '2102' or '2103' or '2104' or '2105' or '2106' or '2201' or '2107' or '2108' or '8102' or '8104' for field in fields):
             cald_background = '2' # Not CALD (No)
-        elif any(row[field] > '1101' for field in fields):
+        elif any(row[field] > '1101' and < '1202' or > '2102' and < '2202' or > '8102' and < '8104' for field in fields):
             cald_background = '1' # CALD (Yes)
         else:
             cald_background = '0' # Unknown (update during screening)
